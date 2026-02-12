@@ -1,0 +1,136 @@
+import tkinter as tk
+from tkinter import ttk, scrolledtext
+import random
+
+class PoesieInteractive:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Poésie Interactive - Mahmoud Darwich")
+        self.root.geometry("900x700")
+        self.root.configure(bg="#1a1a2e")
+        
+        # Poème : "على هذه الأرض ما يستحق الحياة" (fragments)
+        self.vers = [
+            "على هذه الأرض ما يستحق الحياة",
+            "رائحة الخبز في الفجر، رأي امرأة في الرجال،",
+            "اسم أمٍ، متعة الطفل بلعبة بسيطة.",
+            "هناك ما يستحق الحياة على هذه الأرض."
+        ]
+        
+        # Effets par mot-clé : (couleur, commentaire)
+        self.effets = {
+            "الأرض": ("#2c3e50", "الأرض : رمز الوطن والذاكرة الجماعية في شعر درويش."),
+            "الحياة": ("#27ae60", "الحياة : ما يقاوم الاحتلال والنسيان."),
+            "الخبز": ("#f39c12", "الخبز : رمز البساطة واليوميات الفلسطينية."),
+            "الأم": ("#e74c3c", "الأم : مصدر الهوية والاستمرارية.")
+        }
+        
+        self.current_vers_index = 0
+        self.setup_ui()
+        
+    def setup_ui(self):
+        # Titre
+        titre = tk.Label(self.root, text="مَحْمُودْ دَرْوِيشْ\nعلى هذه الأرض", 
+                        font=("Traditional Arabic", 24, "bold"), 
+                        fg="#ecf0f1", bg="#1a1a2e")
+        titre.pack(pady=20)
+        
+        # Zone texte principale (poème)
+        self.texte_poeme = scrolledtext.ScrolledText(self.root, 
+                                                    wrap=tk.WORD, 
+                                                    font=("Traditional Arabic", 22),
+                                                    height=8,
+                                                    bg="#16213e", fg="#ecf0f1",
+                                                    insertbackground="#ecf0f1")
+        self.texte_poeme.pack(pady=20, padx=40, fill=tk.BOTH, expand=True)
+        self.texte_poeme.bind("<Button-1>", self.on_mot_clique)
+        
+        # Frame pour commentaire
+        frame_commentaire = tk.Frame(self.root, bg="#1a1a2e")
+        frame_commentaire.pack(pady=20, padx=40, fill=tk.X)
+        
+        tk.Label(frame_commentaire, text="تَفْسِيرْ :", 
+                font=("Traditional Arabic", 16, "bold"), 
+                fg="#ecf0f1", bg="#1a1a2e").pack(anchor="w")
+        
+        self.commentaire_label = tk.Label(frame_commentaire, 
+                                         text="كليكْ عَلى كَلِمَةْ لِتَرَىْ تَفْسِيرْهَا",
+                                         font=("Traditional Arabic", 14),
+                                         fg="#bdc3c7", bg="#1a1a2e", wraplength=800)
+        self.commentaire_label.pack(anchor="w", pady=(5,0))
+        
+        # Boutons
+        frame_boutons = tk.Frame(self.root, bg="#1a1a2e")
+        frame_boutons.pack(pady=20)
+        
+        btn_suivant = tk.Button(frame_boutons, text="الْفَرْسْ التَّالِيْ", 
+                               command=self.vers_suivant,
+                               font=("Traditional Arabic", 14),
+                               bg="#3498db", fg="white", padx=20)
+        btn_suivant.pack(side=tk.LEFT, padx=10)
+        
+        btn_aleatoire = tk.Button(frame_boutons, text="عَشْوَائِيْ", 
+                                 command=self.vers_aleatoire,
+                                 font=("Traditional Arabic", 14),
+                                 bg="#9b59b6", fg="white", padx=20)
+        btn_aleatoire.pack(side=tk.LEFT, padx=10)
+        
+        btn_reinitialiser = tk.Button(frame_boutons, text="بِدَايَةْ", 
+                                     command=self.reinitialiser,
+                                     font=("Traditional Arabic", 14),
+                                     bg="#e67e22", fg="white", padx=20)
+        btn_reinitialiser.pack(side=tk.LEFT, padx=10)
+        
+        # Affichage initial
+        self.afficher_vers(self.current_vers_index)
+    
+    def afficher_vers(self, index):
+        self.texte_poeme.delete("1.0", tk.END)
+        self.texte_poeme.insert("1.0", self.vers[index])
+    
+    def vers_suivant(self):
+        self.current_vers_index = (self.current_vers_index + 1) % len(self.vers)
+        self.afficher_vers(self.current_vers_index)
+    
+    def vers_aleatoire(self):
+        self.current_vers_index = random.randint(0, len(self.vers) - 1)
+        self.afficher_vers(self.current_vers_index)
+    
+    def reinitialiser(self):
+        self.current_vers_index = 0
+        self.afficher_vers(0)
+        self.commentaire_label.config(text="كليكْ عَلى كَلِمَةْ لِتَرَىْ تَفْسِيرْهَا", fg="#bdc3c7")
+        self.root.configure(bg="#1a1a2e")
+    
+    def on_mot_clique(self, event):
+        # Position du clic
+        index = self.texte_poeme.index(f"@{event.x},{event.y}")
+        # Mot approximatif autour du clic (améliorable avec regex)
+        ligne = int(index.split('.')[0])
+        col = int(index.split('.')[1])
+        
+        texte_complet = self.texte_poeme.get("1.0", tk.END).strip()
+        mots = texte_complet.split()
+        
+        # Cherche le mot le plus proche
+        mot_plus_proche = None
+        distance_min = float('inf')
+        for i, mot in enumerate(mots):
+            if mot in self.effets:
+                # Distance approximative
+                dist_col = abs(col - len(' '.join(mots[:i])))
+                if dist_col < distance_min:
+                    distance_min = dist_col
+                    mot_plus_proche = mot
+        
+        if mot_plus_proche and distance_min < 50:  # Seuil de proximité
+            couleur, commentaire = self.effets[mot_plus_proche]
+            self.root.configure(bg=couleur)
+            self.commentaire_label.config(text=commentaire, fg="#ecf0f1")
+        else:
+            self.commentaire_label.config(text="كَلِمَةْ لَيْسَتْ مَعْرُوفَةْ", fg="#e74c3c")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PoesieInteractive(root)
+    root.mainloop()

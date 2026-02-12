@@ -1,0 +1,280 @@
+import tkinter as tk
+from tkinter import scrolledtext
+import random
+
+class PoesieInteractiveComplet:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Littérature Numérique - Mahmoud Darwich")
+        self.root.geometry("1200x900")
+        self.root.configure(bg="#0f0f1e")
+        
+        # Le passage complet
+        self.passage = """علَى هَذِهِ الأَرْض مَا يَسْتَحِقُّ الحَياةْ: تَرَدُّدُ إبريلَ, رَائِحَةُ الخُبْزِ فِي الفجْرِ، آراءُ امْرأَةٍ فِي الرِّجالِ، كِتَابَاتُ أَسْخِيْلِيوس، أوَّلُ الحُبِّ، عشبٌ عَلَى حجرٍ، أُمَّهاتٌ تَقِفْنَ عَلَى خَيْطِ نايٍ, وخوفُ الغُزَاةِ مِنَ الذِّكْرياتْ."""
+        
+        # Dictionnaire complet avec tous les symboles
+        self.symboles = {
+            "الأَرْض": {
+                "couleur": "#2c3e50",
+                "emoji": "🖤",
+                "explication": "الأَرْض (la terre) : Symbole du pays palestinien, territoire sacré et mémoire collective. Chez Darwich, c'est l'ancrage existentiel face à l'exil."
+            },
+            "الحَياةْ": {
+                "couleur": "#27ae60",
+                "emoji": "🟢",
+                "explication": "الحَياةْ (la vie) : Ce qui mérite d'être vécu. Acte de résistance poétique contre l'oubli et la mort politique."
+            },
+            "تَرَدُّدُ إبريلَ": {
+                "couleur": "#f39c12",
+                "emoji": "🌸",
+                "explication": "تَرَدُّدُ إبريلَ (le tremblement d'avril) : Avril symbolise le printemps, la renaissance, mais aussi l'incertitude. Image de la nature oscillante."
+            },
+            "رَائِحَةُ الخُبْزِ": {
+                "couleur": "#e8b76b",
+                "emoji": "🍞",
+                "explication": "رَائِحَةُ الخُبْزِ فِي الفجْرِ (odeur du pain à l'aube) : Sensualité du quotidien, acte de nourrir et transmettre. Le pain comme lien entre générations."
+            },
+            "الفجْرِ": {
+                "couleur": "#e74c3c",
+                "emoji": "🌅",
+                "explication": "الفجْرِ (l'aube) : Moment de passage, espoir qui renaît chaque jour. Liminalité entre la nuit (oppression) et la lumière (liberté)."
+            },
+            "آراءُ امْرأَةٍ": {
+                "couleur": "#c0392b",
+                "emoji": "👩",
+                "explication": "آراءُ امْرأَةٍ فِي الرِّجالِ (opinions d'une femme) : Voix féminine qui juge, critique, pense. Autonomie intellectuelle et émancipation."
+            },
+            "كِتَابَاتُ أَسْخِيْلِيوس": {
+                "couleur": "#9b59b6",
+                "emoji": "📖",
+                "explication": "كِتَابَاتُ أَسْخِيْلِيوس (écrits d'Eschyle) : Référence à la tragédie grecque. Darwich dialogue avec les grands humanistes universels."
+            },
+            "أوَّلُ الحُبِّ": {
+                "couleur": "#e91e63",
+                "emoji": "💕",
+                "explication": "أوَّلُ الحُبِّ (le premier amour) : Innocence, émotion primaire. Contrepoint tendre aux violences historiques. L'amour comme affirmation de vie."
+            },
+            "عشبٌ عَلَى حجرٍ": {
+                "couleur": "#16a085",
+                "emoji": "🌿",
+                "explication": "عشبٌ عَلَى حجرٍ (herbe sur la pierre) : Métaphore de ténacité. La vie fragile qui pousse sur le dur, l'impossible. Symbole de persistance."
+            },
+            "أُمَّهاتٌ": {
+                "couleur": "#d35400",
+                "emoji": "👵",
+                "explication": "أُمَّهاتٌ تَقِفْنَ عَلَى خَيْطِ نايٍ (mères debout sur un fil de flûte) : Image surréaliste. Fragilité extrême mais dignité inébranlable."
+            },
+            "نايٍ": {
+                "couleur": "#3498db",
+                "emoji": "🪈",
+                "explication": "نايٍ (flûte) : Instrument de la poésie arabe, voix douce. Équilibre impossible entre musique et solidité. Beauté fragile."
+            },
+            "خوفُ الغُزَاةِ": {
+                "couleur": "#2c3e50",
+                "emoji": "😨",
+                "explication": "خوفُ الغُزَاةِ (la peur des envahisseurs) : Retournement de perspective. Ce ne sont pas les colonisés qui ont peur, mais les colonisateurs."
+            },
+            "الذِّكْرياتْ": {
+                "couleur": "#34495e",
+                "emoji": "📜",
+                "explication": "الذِّكْرياتْ (les souvenirs) : La mémoire comme arme politique suprême. L'histoire et l'identité que les occupants ne peuvent pas détruire."
+            }
+        }
+        
+        self.couleur_initiale = "#0f0f1e"
+        self.setup_ui()
+    
+    def setup_ui(self):
+        # Header
+        header = tk.Frame(self.root, bg="#0f0f1e")
+        header.pack(pady=15)
+        
+        tk.Label(header, text="مَحْمُودْ دَرْوِيشْ", 
+                font=("Traditional Arabic", 28, "bold"), 
+                fg="#ecf0f1", bg="#0f0f1e").pack()
+        
+        tk.Label(header, text="على هذه الأرض ما يستحق الحياة", 
+                font=("Traditional Arabic", 18), 
+                fg="#bdc3c7", bg="#0f0f1e").pack()
+        
+        # Main content - deux colonnes
+        main_frame = tk.Frame(self.root, bg="#0f0f1e")
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
+        
+        # Colonne gauche : le texte
+        left_frame = tk.Frame(main_frame, bg="#0f0f1e")
+        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0,10))
+        
+        tk.Label(left_frame, text="📖 Le Passage", 
+                font=("Traditional Arabic", 14, "bold"), 
+                fg="#ecf0f1", bg="#0f0f1e").pack(anchor="w")
+        
+        self.texte_poeme = scrolledtext.ScrolledText(left_frame, 
+                                                    wrap=tk.WORD, 
+                                                    font=("Traditional Arabic", 18),
+                                                    height=12,
+                                                    bg="#16213e", fg="#ecf0f1",
+                                                    insertbackground="#ecf0f1",
+                                                    relief=tk.FLAT,
+                                                    padx=15, pady=15)
+        self.texte_poeme.pack(fill=tk.BOTH, expand=True, pady=(5,0))
+        self.texte_poeme.insert("1.0", self.passage)
+        self.texte_poeme.config(state=tk.DISABLED)
+        self.texte_poeme.bind("<Button-1>", self.on_mot_clique)
+        
+        # Colonne droite : explications
+        right_frame = tk.Frame(main_frame, bg="#0f0f1e", width=350)
+        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=False, padx=(10,0))
+        right_frame.pack_propagate(False)
+        
+        tk.Label(right_frame, text="🎨 Symboles", 
+                font=("Traditional Arabic", 14, "bold"), 
+                fg="#ecf0f1", bg="#0f0f1e").pack(anchor="w")
+        
+        # Zone de commentaire
+        self.commentaire_frame = tk.Frame(right_frame, bg="#16213e", relief=tk.FLAT)
+        self.commentaire_frame.pack(fill=tk.BOTH, expand=True, pady=(5,0))
+        
+        self.emoji_label = tk.Label(self.commentaire_frame, text="Cliquez sur un mot",
+                                   font=("Arial", 32), fg="#ecf0f1", bg="#16213e")
+        self.emoji_label.pack(pady=(10,5))
+        
+        self.mot_label = tk.Label(self.commentaire_frame, text="",
+                                 font=("Traditional Arabic", 14, "bold"), 
+                                 fg="#3498db", bg="#16213e", wraplength=300)
+        self.mot_label.pack(padx=10)
+        
+        self.explication_label = tk.Label(self.commentaire_frame, 
+                                         text="",
+                                         font=("Arial", 10), 
+                                         fg="#bdc3c7", bg="#16213e", 
+                                         wraplength=300, justify=tk.LEFT)
+        self.explication_label.pack(padx=10, pady=10)
+        
+        # Boutons
+        button_frame = tk.Frame(self.root, bg="#0f0f1e")
+        button_frame.pack(pady=15)
+        
+        btn_aleatoire = tk.Button(button_frame, text="🎲 Symbole Aléatoire", 
+                                 command=self.symbole_aleatoire,
+                                 font=("Arial", 11, "bold"),
+                                 bg="#3498db", fg="white", 
+                                 padx=15, pady=8, relief=tk.FLAT, 
+                                 cursor="hand2")
+        btn_aleatoire.pack(side=tk.LEFT, padx=10)
+        
+        btn_reinitialiser = tk.Button(button_frame, text="🔄 Réinitialiser", 
+                                     command=self.reinitialiser,
+                                     font=("Arial", 11, "bold"),
+                                     bg="#e74c3c", fg="white", 
+                                     padx=15, pady=8, relief=tk.FLAT,
+                                     cursor="hand2")
+        btn_reinitialiser.pack(side=tk.LEFT, padx=10)
+        
+        btn_tous = tk.Button(button_frame, text="📚 Voir Tous les Symboles", 
+                            command=self.afficher_tous,
+                            font=("Arial", 11, "bold"),
+                            bg="#9b59b6", fg="white", 
+                            padx=15, pady=8, relief=tk.FLAT,
+                            cursor="hand2")
+        btn_tous.pack(side=tk.LEFT, padx=10)
+        
+        # Message initial
+        self.afficher_explication("", "", "", "Cliquez sur un mot pour découvrir son sens")
+    
+    def afficher_explication(self, mot, couleur, emoji, explication):
+        self.mot_label.config(text=mot)
+        self.emoji_label.config(text=emoji)
+        self.explication_label.config(text=explication)
+        self.commentaire_frame.config(bg=couleur)
+        self.emoji_label.config(bg=couleur)
+        self.mot_label.config(bg=couleur)
+        self.explication_label.config(bg=couleur)
+        self.root.configure(bg=couleur)
+    
+    def on_mot_clique(self, event):
+        index = self.texte_poeme.index(f"@{event.x},{event.y}")
+        texte_complet = self.texte_poeme.get("1.0", tk.END).strip()
+        
+        # Cherche le mot le plus proche du clic
+        mot_trouve = None
+        distance_min = float('inf')
+        
+        for symbole in self.symboles.keys():
+            if symbole in texte_complet:
+                pos = texte_complet.find(symbole)
+                if pos != -1:
+                    # Estimation de la distance
+                    distance = abs(pos - len(texte_complet[:int(index.split('.')[0])*50]))
+                    if distance < distance_min:
+                        distance_min = distance
+                        mot_trouve = symbole
+        
+        if mot_trouve and distance_min < 100:
+            info = self.symboles[mot_trouve]
+            self.afficher_explication(
+                mot_trouve,
+                info["couleur"],
+                info["emoji"],
+                info["explication"]
+            )
+        else:
+            self.afficher_explication(
+                "?",
+                "#e74c3c",
+                "❌",
+                "Cliquez sur un mot-clé du poème"
+            )
+    
+    def symbole_aleatoire(self):
+        symbole = random.choice(list(self.symboles.keys()))
+        info = self.symboles[symbole]
+        self.afficher_explication(
+            symbole,
+            info["couleur"],
+            info["emoji"],
+            info["explication"]
+        )
+    
+    def reinitialiser(self):
+        self.afficher_explication(
+            "", "", "", 
+            "Cliquez sur un mot pour découvrir son sens"
+        )
+        self.root.configure(bg=self.couleur_initiale)
+        self.commentaire_frame.config(bg="#16213e")
+        self.emoji_label.config(bg="#16213e")
+        self.mot_label.config(bg="#16213e")
+        self.explication_label.config(bg="#16213e")
+    
+    def afficher_tous(self):
+        # Fenêtre popup avec tous les symboles
+        popup = tk.Toplevel(self.root)
+        popup.title("Tous les Symboles")
+        popup.geometry("600x700")
+        popup.configure(bg="#0f0f1e")
+        
+        title = tk.Label(popup, text="🎨 Tous les Symboles", 
+                        font=("Traditional Arabic", 16, "bold"),
+                        fg="#ecf0f1", bg="#0f0f1e")
+        title.pack(pady=10)
+        
+        scrollbar = scrolledtext.ScrolledText(popup, 
+                                             wrap=tk.WORD,
+                                             font=("Arial", 10),
+                                             bg="#16213e", fg="#ecf0f1",
+                                             relief=tk.FLAT, padx=15, pady=15)
+        scrollbar.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        for i, (symbole, info) in enumerate(self.symboles.items(), 1):
+            texte = f"{i}. {info['emoji']} {symbole}\n"
+            texte += f"   Couleur: {info['couleur']}\n"
+            texte += f"   {info['explication']}\n\n"
+            scrollbar.insert(tk.END, texte)
+        
+        scrollbar.config(state=tk.DISABLED)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PoesieInteractiveComplet(root)
+    root.mainloop()
