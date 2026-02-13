@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 
 import { CustomCursor } from "@/components/CustomCursor";
 import { FluidBackground } from "@/components/FluidBackground";
+import { MusicPlayer } from "@/components/MusicPlayer";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <TooltipProvider>
         <CustomCursor />
         <FluidBackground />
+        <MusicPlayer />
         <Toaster />
         <Router />
       </TooltipProvider>
